@@ -11,7 +11,8 @@
               <span>请</span>
               <router-link to="/login">登录</router-link>
               <router-link to="/register" class="register"
-                >免费注册</router-link>
+                >免费注册</router-link
+              >
             </p>
           </div>
           <div class="typeList">
@@ -60,11 +61,15 @@ export default {
   name: "HeaderComp",
   methods: {
     doSearch() {
-      this.$router.push({
+      let location = {
         name: "search",
         params: { keyWords: this.keyWords },
-        query:{k:this.keyWords}
-      });
+      };
+      let query = this.$route.query;
+      if (query) {
+        location.query = query;
+      }
+      this.$router.push(location);
       console.log(this.$route);
     },
   },

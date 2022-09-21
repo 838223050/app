@@ -72,7 +72,6 @@ import { mapState } from "vuex";
 export default {
   name: "TypeNav",
   mounted() {
-    this.$store.dispatch("categoryList");
     if (this.$route.path != "/home") {
       this.show = false;
     }
@@ -105,6 +104,9 @@ export default {
         }
       } else {
         return;
+      }
+      if(this.$route.params){
+        location.params = this.$route.params;
       }
       this.$router.push(location);
     },
@@ -257,7 +259,7 @@ export default {
       opacity: 0;
     }
     .sort-leave-active {
-      transition: all 0.5s linear;
+      transition: all 0.3s linear;
     }
     .sort-enter-active {
       transition: all 0.5s linear;
