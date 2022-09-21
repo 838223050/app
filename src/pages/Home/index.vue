@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import TypeNav from "@/components/TypeNav";
+// import TypeNav from "@/components/TypeNav";
 import ListContainer from "./ListContainer";
 import Recommend from "./Recomand";
 import Rank from "./Rank";
@@ -31,7 +31,6 @@ import Brand from "./Brand";
 export default {
   name: "HomePage",
   components: {
-    TypeNav,
     ListContainer,
     Recommend,
     Rank,

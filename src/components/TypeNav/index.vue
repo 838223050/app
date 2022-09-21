@@ -1,7 +1,7 @@
 <template>
   <!-- 商品分类导航 -->
   <div class="type-nav">
-    <div class="container">
+    <div class="container" @mouseenter="navshow" @mouseleave="navHide">
       <h2 class="all">全部商品分类</h2>
       <nav class="nav">
         <a href="###">服装城</a>
@@ -13,51 +13,53 @@
         <a href="###">有趣</a>
         <a href="###">秒杀</a>
       </nav>
-      <div class="sort" @click="doSearch">
-        <div class="all-sort-list2">
-          <div class="item" v-for="c1 in categoryList" :key="c1.categoryId">
-            <h3 class="active">
-              <a
-                href="javascript:;"
-                :data-categoryName="c1.categoryName"
-                :data-categoryId1="c1.categoryId"
-                >{{ c1.categoryName }}</a
-              >
-            </h3>
-            <div class="item-list clearfix">
-              <div
-                class="subitem"
-                v-for="c2 in c1.categoryChild"
-                :key="c2.categoryId"
-              >
-                <dl class="fore">
-                  <dt>
-                    <a
-                      href="javascript:;"
-                      :data-categoryName="c2.categoryName"
-                      :data-categoryId2="c2.categoryId"
-                      >{{ c2.categoryName }}</a
-                    >
-                  </dt>
-                  <dd>
-                    <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
+      <Transition name="sort">
+        <div class="sort" @click="doSearch" v-show="show">
+          <div class="all-sort-list2">
+            <div class="item" v-for="c1 in categoryList" :key="c1.categoryId">
+              <h3 class="active">
+                <a
+                  href="javascript:;"
+                  :data-categoryName="c1.categoryName"
+                  :data-categoryId1="c1.categoryId"
+                  >{{ c1.categoryName }}</a
+                >
+              </h3>
+              <div class="item-list clearfix">
+                <div
+                  class="subitem"
+                  v-for="c2 in c1.categoryChild"
+                  :key="c2.categoryId"
+                >
+                  <dl class="fore">
+                    <dt>
                       <a
                         href="javascript:;"
-                        :data-categoryName="c3.categoryName"
-                        :data-categoryId3="c3.categoryId"
-                        >{{ c3.categoryName }}</a
+                        :data-categoryName="c2.categoryName"
+                        :data-categoryId2="c2.categoryId"
+                        >{{ c2.categoryName }}</a
                       >
-                    </em>
-                  </dd>
-                </dl>
+                    </dt>
+                    <dd>
+                      <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
+                        <a
+                          href="javascript:;"
+                          :data-categoryName="c3.categoryName"
+                          :data-categoryId3="c3.categoryId"
+                          >{{ c3.categoryName }}</a
+                        >
+                      </em>
+                    </dd>
+                  </dl>
+                </div>
               </div>
             </div>
+            <h3>
+              <a href="">箱包</a>
+            </h3>
           </div>
-          <h3>
-            <a href="">箱包</a>
-          </h3>
         </div>
-      </div>
+      </Transition>
     </div>
   </div>
 </template>
@@ -71,6 +73,14 @@ export default {
   name: "TypeNav",
   mounted() {
     this.$store.dispatch("categoryList");
+    if (this.$route.path != "/home") {
+      this.show = false;
+    }
+  },
+  data() {
+    return {
+      show: true,
+    };
   },
   computed: {
     ...mapState({
@@ -97,6 +107,16 @@ export default {
         return;
       }
       this.$router.push(location);
+    },
+    navshow() {
+      if (this.$route.path == "/home") {
+        return;
+      }
+      this.show = true;
+    },
+    navHide() {
+      if (this.$route.path == "/home") return;
+      this.show = false;
     },
   },
 };
@@ -222,6 +242,25 @@ export default {
           }
         }
       }
+    }
+
+    .sort-enter {
+      opacity: 0;
+    }
+    .sort-enter-to {
+      opacity: 1;
+    }
+    .sort-leave-from {
+      opacity: 1;
+    }
+    .sort-leave-to {
+      opacity: 0;
+    }
+    .sort-leave-active {
+      transition: all 0.5s linear;
+    }
+    .sort-enter-active {
+      transition: all 0.5s linear;
     }
   }
 }
