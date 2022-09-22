@@ -98,30 +98,36 @@ export default {
   name: "ListContainer",
   mounted() {
     this.$store.dispatch("getBannerList");
-    setTimeout(() => {
-      new Swiper("#mySwiper", {
-        loop: true, // 循环模式选项
-
-        // 如果需要分页器
-        pagination: {
-          el: ".swiper-pagination",
-        },
-
-        // 如果需要前进后退按钮
-        navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        },
-
-        // 如果需要滚动条
-        scrollbar: {
-          el: ".swiper-scrollbar",
-        },
-      });
-    }, 1000);
   },
   computed: {
     ...mapState({ bannerList: (state) => state.Home.bannerList }),
+  },
+  watch: {
+    bannerList: {
+      handler() {
+        this.$nextTick(() => {
+          new Swiper("#mySwiper", {
+            loop: true, // 循环模式选项
+
+            // 如果需要分页器
+            pagination: {
+              el: ".swiper-pagination",
+            },
+
+            // 如果需要前进后退按钮
+            navigation: {
+              nextEl: ".swiper-button-next",
+              prevEl: ".swiper-button-prev",
+            },
+
+            // 如果需要滚动条
+            scrollbar: {
+              el: ".swiper-scrollbar",
+            },
+          });
+        });
+      },
+    },
   },
 };
 </script>
