@@ -3,10 +3,12 @@ import App from './App.vue'
 import router from '@/router'
 import store from './store'
 import TypeNav from "@/components/TypeNav";
+import Carousel from '@/components/Carousel'
 import '@/mock/mockServer.js'
 import 'swiper/css/swiper.css'
 Vue.config.productionTip = false
-Vue.component('TypeNav',TypeNav);
+Vue.component('TypeNav', TypeNav);
+Vue.component("CarouselComp",Carousel)
 new Vue({
   render: h => h(App),
   router,

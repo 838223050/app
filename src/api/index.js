@@ -8,6 +8,7 @@ export const doSearch = (query) => {
     return requests({url:'search',query})
 }
 
-export const reqGetBannerList = () => {
-    return mockRequests.get('/banner')
-}
+export const reqGetBannerList = () => mockRequests.get('/banner')
+
+
+export const reqFloorList = ()=>mockRequests.get('/floor')
