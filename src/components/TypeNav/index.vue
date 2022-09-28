@@ -21,7 +21,7 @@
                 <a
                   href="javascript:;"
                   :data-categoryName="c1.categoryName"
-                  :data-categoryId1="c1.categoryId"
+                  :data-category1-Id="c1.categoryId"
                   >{{ c1.categoryName }}</a
                 >
               </h3>
@@ -36,7 +36,7 @@
                       <a
                         href="javascript:;"
                         :data-categoryName="c2.categoryName"
-                        :data-categoryId2="c2.categoryId"
+                        :data-category2-Id="c2.categoryId"
                         >{{ c2.categoryName }}</a
                       >
                     </dt>
@@ -45,7 +45,7 @@
                         <a
                           href="javascript:;"
                           :data-categoryName="c3.categoryName"
-                          :data-categoryId3="c3.categoryId"
+                          :data-category3-Id="c3.categoryId"
                           >{{ c3.categoryName }}</a
                         >
                       </em>
@@ -88,24 +88,24 @@ export default {
   },
   methods: {
     doSearch(event) {
-      console.log(event.target.nodeName);
-      let { categoryname, categoryid1, categoryid2, categoryid3 } =
+      console.log(event.target.dataset);
+      let { categoryname, category1Id, category2Id, category3Id } =
         event.target.dataset;
-      console.log(categoryname, categoryid1, categoryid2, categoryid3);
+      console.log(categoryname, category1Id, category2Id, category3Id);
       let location = {};
       if (categoryname) {
         location = { name: "search" };
-        if (categoryid1) {
-          location.query = { categoryname, categoryid1 };
-        } else if (categoryid2) {
-          location.query = { categoryname, categoryid2 };
+        if (category1Id) {
+          location.query = { categoryname, category1Id };
+        } else if (category2Id) {
+          location.query = { categoryname, category2Id };
         } else {
-          location.query = { categoryname, categoryid3 };
+          location.query = { categoryname, category3Id };
         }
       } else {
         return;
       }
-      if(this.$route.params){
+      if (this.$route.params) {
         location.params = this.$route.params;
       }
       this.$router.push(location);

@@ -11,4 +11,10 @@ export const doSearch = (query) => {
 export const reqGetBannerList = () => mockRequests.get('/banner')
 
 
-export const reqFloorList = ()=>mockRequests.get('/floor')
+export const reqFloorList = () => mockRequests.get('/floor')
+
+export const reqSearchList = (params) => requests({
+    method: 'post',
+    url: '/list',
+    data:params
+});

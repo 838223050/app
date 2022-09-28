@@ -63,7 +63,7 @@ export default {
     doSearch() {
       let location = {
         name: "search",
-        params: { keyWords: this.keyWords },
+        params: { keyword: this.keyWords },
       };
       let query = this.$route.query;
       if (query) {
