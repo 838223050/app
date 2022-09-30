@@ -15,14 +15,19 @@
             </li>
           </ul>
           <ul class="fl sui-tag">
-            <li class="with-x">手机<i>x</i></li>
-            <li class="with-x">华为<i>x</i></li>
-            <li class="with-x">iphone<i>x</i></li>
-            <li class="with-x">OPPO<i>x</i></li>
+            <li class="with-x" v-if="searchParams.categoryName">
+              {{ searchParams.categoryName }}<i @click="removeTag">x</i>
+            </li>
+            <li class="with-x" v-if="searchParams.keyword">
+              {{ searchParams.keyword }}<i @click="removeParams">x</i>
+            </li>
+            <li class="with-x" v-if="brander">
+              {{ brander }}<i @click="removeTrademark">x</i>
+            </li>
           </ul>
         </div>
         <!--selector-->
-        <SearchSelector />
+        <SearchSelector @addBrander="addTrademark" />
         <!--details-->
         <div class="details clearfix">
           <div class="sui-navbar">
@@ -225,19 +230,80 @@ export default {
         props: [],
         trademark: "",
       },
+      brander: "",
     };
   },
+  methods: {
+    // 更新搜索参数对象
+    updateQueryAndParams() {
+      let params = this.$route.params;
+      let query = this.$route.query;
+      this.searchParams = {
+        ...{
+          category1Id: "",
+          category2Id: "",
+          category3Id: "",
+          categoryName: "",
+          keyword: "",
+          order: "",
+          pageNo: 1,
+          pageSize: 10,
+          props: [],
+          trademark: this.searchParams.trademark,
+        },
+        ...params,
+        ...query,
+      };
+    },
+    // 移除分类标签
+    removeTag() {
+      Object.assign(this.searchParams, {
+        category1Id: "",
+        category2Id: "",
+        category3Id: "",
+        categoryName: "",
+      });
+      if (this.$route.params)
+        this.$router.push({ name: "search", params: this.$route.params });
+      else this.$router.push({ name: "search" });
+    },
+    // 移除搜索关键字
+    removeParams() {
+      this.searchParams.keyword = "";
+      this.$bus.$emit("clear");
+      if (this.$route.query)
+        this.$router.push({ name: "search", query: this.$route.query });
+      else this.$router.push({ name: "search" });
+    },
+    // 移除商标标签
+    removeTrademark() {
+      this.searchParams.trademark = "";
+      this.brander = "";
+      this.$store.dispatch("getSearchList", this.searchParams);
+    },
+    // 添加商标标签
+    addTrademark(tmid, tmname) {
+      this.searchParams.trademark = `${tmid}:${tmname}`;
+      this.brander = tmname;
+      console.log(this.searchParams);
+      this.$store.dispatch("getSearchList", this.searchParams);
+    },
+  },
   beforeMount() {
-    console.log(this.$router.params);
-    let params = this.$route.params;
-    let query = this.$route.query;
-    Object.assign(this.searchParams, params, query);
+    this.updateQueryAndParams();
   },
   computed: {
     ...mapGetters(["goodsList", "trademarkList"]),
   },
   components: {
     SearchSelector,
+  },
+  // 监视路由对象的变更，一旦路由对象发生变更立即向vuex请求更新仓库库数据
+  watch: {
+    $route() {
+      this.updateQueryAndParams();
+      this.$store.dispatch("getSearchList", this.searchParams);
+    },
   },
 };
 </script>

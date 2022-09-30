@@ -8,9 +8,13 @@ import '@/mock/mockServer.js'
 import 'swiper/css/swiper.css'
 Vue.config.productionTip = false
 Vue.component('TypeNav', TypeNav);
-Vue.component("CarouselComp",Carousel)
+Vue.component("CarouselComp", Carousel)
 new Vue({
+    beforeCreate() {
+    Vue.prototype.$bus = this;
+  },
   render: h => h(App),
   router,
   store
+
 }).$mount('#app')

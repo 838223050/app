@@ -59,6 +59,10 @@
 <script>
 export default {
   name: "HeaderComp",
+  mounted() {
+    // 注册全局事件
+    this.$bus.$on("clear", this.clear);
+  },
   methods: {
     doSearch() {
       let location = {
@@ -70,7 +74,11 @@ export default {
         location.query = query;
       }
       this.$router.push(location);
-      console.log(this.$route);
+      console.log(this.$route, location, "open");
+    },
+    // 清空搜索框
+    clear() {
+      this.keyWords = "";
     },
   },
   data() {

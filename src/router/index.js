@@ -17,7 +17,7 @@ let router = new VueRouter({
             meta:{show:true}
         },
         {
-            path: '/search/:keyWords?',
+            path: '/search/:keyword?',
             component: Search,
             name: 'search',
             meta:{show:true}
@@ -41,9 +41,9 @@ let router = new VueRouter({
 VueRouter.prototype.push = function (path,resolve,reject) {
     console.log(this);
     if (resolve && reject) {
-        originPush.call(this, path,resolve,reject);
+        originPush.call(this, path,resolve,reject).catch(err=>err);
     } else {
-        originPush.call(this, path);
+        originPush.call(this, path).catch(err=>err);
     } 
 }
 export default router

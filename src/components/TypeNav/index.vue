@@ -20,7 +20,7 @@
               <h3 class="active">
                 <a
                   href="javascript:;"
-                  :data-categoryName="c1.categoryName"
+                  :data-category-Name="c1.categoryName"
                   :data-category1-Id="c1.categoryId"
                   >{{ c1.categoryName }}</a
                 >
@@ -35,7 +35,7 @@
                     <dt>
                       <a
                         href="javascript:;"
-                        :data-categoryName="c2.categoryName"
+                        :data-category-Name="c2.categoryName"
                         :data-category2-Id="c2.categoryId"
                         >{{ c2.categoryName }}</a
                       >
@@ -44,7 +44,7 @@
                       <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
                         <a
                           href="javascript:;"
-                          :data-categoryName="c3.categoryName"
+                          :data-category-Name="c3.categoryName"
                           :data-category3-Id="c3.categoryId"
                           >{{ c3.categoryName }}</a
                         >
@@ -89,18 +89,18 @@ export default {
   methods: {
     doSearch(event) {
       console.log(event.target.dataset);
-      let { categoryname, category1Id, category2Id, category3Id } =
+      let { categoryName, category1Id, category2Id, category3Id } =
         event.target.dataset;
-      console.log(categoryname, category1Id, category2Id, category3Id);
+      console.log(categoryName, category1Id, category2Id, category3Id);
       let location = {};
-      if (categoryname) {
+      if (categoryName) {
         location = { name: "search" };
         if (category1Id) {
-          location.query = { categoryname, category1Id };
+          location.query = { categoryName, category1Id };
         } else if (category2Id) {
-          location.query = { categoryname, category2Id };
+          location.query = { categoryName, category2Id };
         } else {
-          location.query = { categoryname, category3Id };
+          location.query = { categoryName, category3Id };
         }
       } else {
         return;

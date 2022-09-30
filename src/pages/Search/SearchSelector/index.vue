@@ -4,8 +4,8 @@
       <div class="type-wrap logo">
         <div class="fl key brand">品牌</div>
         <div class="value logos">
-          <ul class="logo-list">
-            <li v-for="item in trademarkList" :key="item.tmId">
+          <ul class="logo-list" >
+            <li v-for="item in trademarkList" :key="item.tmId" @click="tradeMarkHandle(item.tmId,item.tmName)">
               {{ item.tmName }}
             </li>
           </ul>
@@ -31,14 +31,20 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import { mapGetters } from "vuex";
 export default {
   name: "SearchSelector",
   mounted() {
     this.$store.dispatch("getSearchList", this.searchParams);
   },
-    computed: {
-    ...mapGetters(["attrsList","trademarkList"]),
+  computed: {
+    ...mapGetters(["attrsList", "trademarkList"]),
+  },
+  methods: {
+    // 自定义事件，负责将所点击的品牌传给父组件
+    tradeMarkHandle(id,tmname) {
+        this.$emit("addBrander", id,tmname);
+    },
   },
 };
 </script>
