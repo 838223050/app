@@ -24,36 +24,49 @@
             <li class="with-x" v-if="brander">
               {{ brander }}<i @click="removeTrademark">x</i>
             </li>
+            <li
+              class="with-x"
+              v-for="(item, index) in searchParams.props"
+              :key="index"
+              @click="removeAttr(index)"
+            >
+              {{ item.split(":")[1] }}<i @click="removeTrademark">x</i>
+            </li>
           </ul>
         </div>
-        <!--selector-->
-        <SearchSelector @addBrander="addTrademark" />
-        <!--details-->
+        <!--属性选择器-->
+        <SearchSelector @addBrander="addTrademark" @attrFilter="fliterHandle" />
+        <!--排序选择-->
         <div class="details clearfix">
           <div class="sui-navbar">
             <div class="navbar-inner filter">
               <ul class="sui-nav">
-                <li class="active">
-                  <a href="#">综合</a>
+                <li
+                  :class="{ active: searchParams.order.indexOf('1') != -1 }"
+                  @click="sortChange('1')"
+                >
+                  <a
+                    >综合<span
+                      v-show="searchParams.order.indexOf('1') != -1"
+                      :class="isAsc ? 'el-icon-top' : 'el-icon-bottom'"
+                    ></span
+                  ></a>
                 </li>
-                <li>
-                  <a href="#">销量</a>
-                </li>
-                <li>
-                  <a href="#">新品</a>
-                </li>
-                <li>
-                  <a href="#">评价</a>
-                </li>
-                <li>
-                  <a href="#">价格⬆</a>
-                </li>
-                <li>
-                  <a href="#">价格⬇</a>
+                <li
+                  :class="{ active: searchParams.order.indexOf('2') != -1 }"
+                  @click="sortChange('2')"
+                >
+                  <a
+                    >价格<span
+                      v-show="searchParams.order.indexOf('2') != -1"
+                      :class="isAsc ? 'el-icon-top' : 'el-icon-bottom'"
+                    ></span
+                  ></a>
                 </li>
               </ul>
             </div>
           </div>
+          <!-- 商品列表 -->
           <div class="goods-list">
             <ul class="yui3-g">
               <li class="yui3-u-1-5" v-for="good in goodsList" :key="good.id">
@@ -92,37 +105,10 @@
               </li>
             </ul>
           </div>
-          <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div><span>共10页&nbsp;</span></div>
-            </div>
-          </div>
+          <!-- 分页器 -->
+          <PaginationComp :now="11" :dataNumber="101" :pageSize="10" />
         </div>
-        <!--hotsale-->
+        <!--热卖商品-->
         <div class="clearfix hot-sale">
           <h4 class="title">热卖商品</h4>
           <div class="hot-list">
@@ -245,7 +231,7 @@ export default {
           category3Id: "",
           categoryName: "",
           keyword: "",
-          order: "",
+          order: "1:desc",
           pageNo: 1,
           pageSize: 10,
           props: [],
@@ -254,6 +240,9 @@ export default {
         ...params,
         ...query,
       };
+    },
+    getData() {
+      this.$store.dispatch("getSearchList", this.searchParams);
     },
     // 移除分类标签
     removeTag() {
@@ -279,14 +268,45 @@ export default {
     removeTrademark() {
       this.searchParams.trademark = "";
       this.brander = "";
-      this.$store.dispatch("getSearchList", this.searchParams);
+      this.getData();
     },
     // 添加商标标签
     addTrademark(tmid, tmname) {
       this.searchParams.trademark = `${tmid}:${tmname}`;
       this.brander = tmname;
       console.log(this.searchParams);
-      this.$store.dispatch("getSearchList", this.searchParams);
+      this.getData();
+    },
+    fliterHandle(id, name, value) {
+      let props = `${id}:${value}:${name}`;
+      this.searchParams.props.push(props);
+      this.getData();
+    },
+    removeAttr(index) {
+      this.searchParams.props.splice(index, 1);
+      this.getData();
+    },
+    sortChange(target) {
+      let now = this.searchParams.order.split(":")[0];
+      if (now == target) {
+        this.sortRollBack();
+      } else {
+        this.searchParams.order = this.searchParams.order.replace(now, target);
+      }
+      this.getData();
+    },
+    sortRollBack() {
+      if (this.isAsc) {
+        this.searchParams.order = this.searchParams.order.replace(
+          "asc",
+          "desc"
+        );
+      } else {
+        this.searchParams.order = this.searchParams.order.replace(
+          "desc",
+          "asc"
+        );
+      }
     },
   },
   beforeMount() {
@@ -294,6 +314,9 @@ export default {
   },
   computed: {
     ...mapGetters(["goodsList", "trademarkList"]),
+    isAsc() {
+      return this.searchParams.order.indexOf("asc") != -1;
+    },
   },
   components: {
     SearchSelector,
@@ -875,82 +898,6 @@ export default {
                   }
                 }
               }
-            }
-          }
-        }
-        .page {
-          width: 733px;
-          height: 66px;
-          overflow: hidden;
-          float: right;
-          .sui-pagination {
-            margin: 18px 0;
-            ul {
-              margin-left: 0;
-              margin-bottom: 0;
-              vertical-align: middle;
-              width: 490px;
-              float: left;
-              li {
-                line-height: 18px;
-                display: inline-block;
-                a {
-                  position: relative;
-                  float: left;
-                  line-height: 18px;
-                  text-decoration: none;
-                  background-color: #fff;
-                  border: 1px solid #e0e9ee;
-                  margin-left: -1px;
-                  font-size: 14px;
-                  padding: 9px 18px;
-                  color: #333;
-                }
-                &.active {
-                  a {
-                    background-color: #fff;
-                    color: #e1251b;
-                    border-color: #fff;
-                    cursor: default;
-                  }
-                }
-                &.prev {
-                  a {
-                    background-color: #fafafa;
-                  }
-                }
-                &.disabled {
-                  a {
-                    color: #999;
-                    cursor: default;
-                  }
-                }
-                &.dotted {
-                  span {
-                    margin-left: -1px;
-                    position: relative;
-                    float: left;
-                    line-height: 18px;
-                    text-decoration: none;
-                    background-color: #fff;
-                    font-size: 14px;
-                    border: 0;
-                    padding: 9px 18px;
-                    color: #333;
-                  }
-                }
-                &.next {
-                  a {
-                    background-color: #fafafa;
-                  }
-                }
-              }
-            }
-            div {
-              color: #333;
-              font-size: 14px;
-              float: right;
-              width: 241px;
             }
           }
         }

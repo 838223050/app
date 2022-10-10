@@ -19,7 +19,7 @@
         <div class="fl key">{{ type.attrName }}</div>
         <div class="fl value">
           <ul class="type-list">
-            <li v-for="(item, index) in type.attrValueList" :key="index">
+            <li v-for="(item, index) in type.attrValueList" :key="index" @click="attrFilter(type.attrId,type.attrName,item)">
               <a>{{ item }}</a>
             </li>
           </ul>
@@ -45,7 +45,11 @@ export default {
     tradeMarkHandle(id,tmname) {
         this.$emit("addBrander", id,tmname);
     },
+    attrFilter(ID,attrname,item){
+      this.$emit('attrFilter',ID,attrname,item);
+    }
   },
+  
 };
 </script>
 
