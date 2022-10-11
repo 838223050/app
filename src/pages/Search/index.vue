@@ -71,21 +71,23 @@
             <ul class="yui3-g">
               <li class="yui3-u-1-5" v-for="good in goodsList" :key="good.id">
                 <div class="list-wrap">
-                  <div class="p-img">
-                    <a href="item.html" target="_blank"
-                      ><img :src="good.defaultImg"
-                    /></a>
-                  </div>
-                  <div class="price">
-                    <strong>
-                      <em>¥ </em>
-                      <i>{{ good.price }}</i>
-                    </strong>
-                  </div>
-                  <div class="attr">
-                    <a target="_blank" href="item.html" :title="good.title">{{
-                      good.title
-                    }}</a>
+                  <div @click='(e)=>goToDetail(e,good.id)'>
+                    <div class="p-img">
+                      <a  target="_blank"
+                        ><img :src="good.defaultImg"
+                      /></a>
+                    </div>
+                    <div class="price">
+                      <strong>
+                        <em>¥ </em>
+                        <i>{{ good.price }}</i>
+                      </strong>
+                    </div>
+                    <div class="attr">
+                      <a target="_blank"  :title="good.title">{{
+                        good.title
+                      }}</a>
+                    </div>
                   </div>
                   <div class="commit">
                     <i class="command">已有<span>2000</span>人评价</i>
@@ -106,7 +108,12 @@
             </ul>
           </div>
           <!-- 分页器 -->
-          <PaginationComp :now="11" :dataNumber="101" :pageSize="10" />
+          <PaginationComp
+            :now="searchParams.pageNo"
+            :dataNumber="searchList.total"
+            :pageSize="searchParams.pageSize"
+            @pageChange="pageChange"
+          />
         </div>
         <!--热卖商品-->
         <div class="clearfix hot-sale">
@@ -212,7 +219,7 @@ export default {
         keyword: "",
         order: "",
         pageNo: 1,
-        pageSize: 10,
+        pageSize: 3,
         props: [],
         trademark: "",
       },
@@ -233,7 +240,7 @@ export default {
           keyword: "",
           order: "1:desc",
           pageNo: 1,
-          pageSize: 10,
+          pageSize: 3,
           props: [],
           trademark: this.searchParams.trademark,
         },
@@ -242,6 +249,7 @@ export default {
       };
     },
     getData() {
+      console.log("look", this.searchParams);
       this.$store.dispatch("getSearchList", this.searchParams);
     },
     // 移除分类标签
@@ -277,15 +285,18 @@ export default {
       console.log(this.searchParams);
       this.getData();
     },
+    // 属性选择处理
     fliterHandle(id, name, value) {
       let props = `${id}:${value}:${name}`;
       this.searchParams.props.push(props);
       this.getData();
     },
+    // 移除属性选择
     removeAttr(index) {
       this.searchParams.props.splice(index, 1);
       this.getData();
     },
+    // 排序方式变更
     sortChange(target) {
       let now = this.searchParams.order.split(":")[0];
       if (now == target) {
@@ -295,6 +306,7 @@ export default {
       }
       this.getData();
     },
+    // 排序反转
     sortRollBack() {
       if (this.isAsc) {
         this.searchParams.order = this.searchParams.order.replace(
@@ -308,12 +320,24 @@ export default {
         );
       }
     },
+    // 页数变更控制
+    pageChange(num) {
+      this.searchParams.pageNo = num;
+      this.getData();
+    },
+    // 前往详情页
+    goToDetail(event,id){
+      console.log(event,id)
+      event.preventDefault();
+      
+      this.$router.push({name:'detail',params:{'productId':id}});
+    }
   },
-  beforeMount() {
-    this.updateQueryAndParams();
+  mounted() {
+    this.$store.dispatch("getSearchList", this.searchParams);
   },
   computed: {
-    ...mapGetters(["goodsList", "trademarkList"]),
+    ...mapGetters(["goodsList", "trademarkList", "searchList"]),
     isAsc() {
       return this.searchParams.order.indexOf("asc") != -1;
     },
@@ -325,7 +349,7 @@ export default {
   watch: {
     $route() {
       this.updateQueryAndParams();
-      this.$store.dispatch("getSearchList", this.searchParams);
+      this.getData();
     },
   },
 };

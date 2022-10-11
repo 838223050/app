@@ -29,6 +29,9 @@ const getters = {
     },
     trademarkList(state) {
         return state.searchList.trademarkList||[];
+    },
+    searchList(state) {
+        return state.searchList || {};
     }
 };
 export default {

@@ -3,11 +3,15 @@
     <div class="fr page">
       <div class="sui-pagination clearfix">
         <ul>
-          <li class="prev disabled">
-            <a href="#">«上一页</a>
+          <li class="prev" :class="{ disabled: now == 1 }" @click="prePage">
+            <a>«上一页</a>
           </li>
-          <li :class="{ active: now == 1 }" v-show="flag">
-            <a href="#">1</a>
+          <li
+            :class="{ active: now == 1 }"
+            v-show="flag"
+            @click="pageHandle(1)"
+          >
+            <a>1</a>
           </li>
           <li class="dotted" v-show="flag"><span>...</span></li>
 
@@ -16,16 +20,25 @@
             :key="page"
             v-show="page >= start"
             :class="{ active: now == page }"
+            @click="pageHandle(page)"
           >
-            <a href="#">{{ page }}</a>
+            <a>{{ page }}</a>
           </li>
 
           <li class="dotted" v-show="flag"><span>...</span></li>
-          <li v-show="flag" :class="{ active: now == total }">
-            <a href="#">{{ total }}</a>
+          <li
+            v-show="flag"
+            :class="{ active: now == total }"
+            @click="pageHandle(total)"
+          >
+            <a>{{ total }}</a>
           </li>
-          <li class="next">
-            <a href="#">下一页»</a>
+          <li
+            class="next"
+            :class="{ disabled: now == total }"
+            @click="nextPage"
+          >
+            <a>下一页»</a>
           </li>
         </ul>
         <div>
@@ -39,9 +52,6 @@
 <script>
 export default {
   name: "PaginationComp",
-  mounted() {
-    this.startAndEnd();
-  },
   data() {
     return {
       start: 1,
@@ -57,12 +67,14 @@ export default {
   },
   methods: {
     startAndEnd() {
+      console.log("caculated", this.total);
       if (this.total <= 7) {
         this.flag = false;
         this.end = this.total;
       } else {
+        this.flag = true;
         let i = 2;
-        if (this.now < this.total / 2) {
+        if (this.now <= this.total / 2) {
           for (i = 2; this.now - i <= 1; i--) {
             continue;
           }
@@ -76,6 +88,28 @@ export default {
           this.start = this.end - 4;
         }
       }
+    },
+    nextPage() {
+      if (this.now < this.total) this.$emit("pageChange", this.now + 1);
+    },
+    prePage() {
+      if (this.now > 1) this.$emit("pageChange", this.now - 1);
+    },
+    pageHandle(num) {
+      this.$emit("pageChange", num);
+    },
+  },
+  watch: {
+    dataNumber: {
+      immediate: true,
+      handler() {
+        this.startAndEnd();
+      },
+    },
+    now: {
+      handler() {
+        this.startAndEnd();
+      },
     },
   },
 };
@@ -98,6 +132,7 @@ export default {
       li {
         line-height: 18px;
         display: inline-block;
+        cursor: pointer;
         a {
           position: relative;
           float: left;

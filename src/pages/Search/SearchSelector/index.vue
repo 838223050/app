@@ -34,9 +34,7 @@
 import { mapGetters } from "vuex";
 export default {
   name: "SearchSelector",
-  mounted() {
-    this.$store.dispatch("getSearchList", this.searchParams);
-  },
+
   computed: {
     ...mapGetters(["attrsList", "trademarkList"]),
   },
