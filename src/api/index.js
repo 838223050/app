@@ -18,3 +18,8 @@ export const reqSearchList = (params) => requests({
     url: '/list',
     data:params
 });
+
+export const reqItem = (id) => requests({
+    method: 'get',
+    url: `/item/${id}`,
+})

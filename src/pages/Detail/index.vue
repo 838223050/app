@@ -356,6 +356,9 @@
     components: {
       ImageList,
       Zoom
+    },
+    mounted(){
+      this.$store.dispatch("getItem",'2');
     }
   }
 </script>

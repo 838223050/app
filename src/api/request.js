@@ -12,6 +12,7 @@ const requests = axios.create({
 
 requests.interceptors.request.use((config) => {
     nProgress.start();
+    console.log(config)
     return config;
 })
 
