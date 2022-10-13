@@ -23,3 +23,11 @@ export const reqItem = (id) => requests({
     method: 'get',
     url: `/item/${id}`,
 })
+
+export const reqAddCart = (id, num) => {
+    return requests({
+        method: 'post',
+        url: `/cart/addToCart/${id}/${num}`,
+    
+    })
+}

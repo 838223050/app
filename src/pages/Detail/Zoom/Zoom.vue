@@ -1,23 +1,54 @@
 <template>
   <div class="spec-preview">
-    <img src="../images/s1.png" />
-    <div class="event"></div>
-    <div class="big">
-      <img src="../images/s1.png" />
+    <img :src="skuImageList[currentIndex].imgUrl" />
+    <div class="event" @mousemove="(event) => zoom(event)"></div>
+    <div class="big" >
+      <img :src="skuImageList[currentIndex].imgUrl" ref='big'/>
     </div>
-    <div class="mask"></div>
+    <div class="mask" ref="mask"></div>
   </div>
-
 </template>
 
 <script>
-    // let mask = document.getElementsByClassName("mask")[0];
-    // let picture = document.getElementsByClassName("spec-preview")[0];
-    // picture.addEventListener("hover", (e) => {
-    //   console.log(e, mask);
-    // });
+// let mask = document.getElementsByClassName("mask")[0];
+// let picture = document.getElementsByClassName("spec-preview")[0];
+// picture.addEventListener("hover", (e) => {
+//   console.log(e, mask);
+// });
 export default {
   name: "ZoomComp",
+  props: {
+    skuImageList: {
+      default: function () {
+        return [{}];
+      },
+    },
+  },
+  data() {
+    return {
+      currentIndex: 0,
+    };
+  },
+  mounted() {
+    this.$bus.$on("changeCurrentImage", this.changeCurrentImage);
+  },
+  methods: {
+    changeCurrentImage(index) {
+      this.currentIndex = index;
+    },
+    zoom(event) {
+      let left = event.offsetX - 100;
+      let top = event.offsetY - 100;
+      if (left < 0) left = 0;
+      if (left > 200) left = 200;
+      if (top < 0) top = 0;
+      if (top > 200) top = 200;
+      this.$refs.big.style.left=-left*2 +'px';
+      this.$refs.big.style.top=-top*2 +'px';
+      this.$refs.mask.style.left = left + "px";
+      this.$refs.mask.style.top = top + "px";
+    },
+  },
 };
 </script>
 

@@ -71,6 +71,7 @@ export default {
       if (this.total <= 7) {
         this.flag = false;
         this.end = this.total;
+        this.start = 1;
       } else {
         this.flag = true;
         let i = 2;

@@ -1,4 +1,4 @@
-import { reqItem } from '@/api/index';
+import { reqItem,reqAddCart } from '@/api/index';
 
 const state = {
     itemData: {},
@@ -19,6 +19,16 @@ const actions = {
             console.log(result.data)
         }
     },
+    async addCart({ commit },data) {
+        console.log(commit,data)
+        let result = await reqAddCart(data.id, data.num);
+        console.log(result);
+        if (result.code == 200) {
+            return 'ok'
+        } else {
+            return Promise.reject("fail to add cart");
+        }
+    }
 };
 
 const getters = {};
