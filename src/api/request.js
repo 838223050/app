@@ -2,6 +2,7 @@
 import axios from 'axios'
 import nProgress from 'nprogress';
 import '../../node_modules/nprogress/nprogress.css'
+import { getUuid } from '@/utils'
 
 
 const requests = axios.create({
@@ -12,6 +13,7 @@ const requests = axios.create({
 
 requests.interceptors.request.use((config) => {
     nProgress.start();
+    config.headers.userTempId = getUuid();
     console.log(config)
     return config;
 })

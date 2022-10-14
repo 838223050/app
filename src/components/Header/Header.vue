@@ -17,7 +17,7 @@
           </div>
           <div class="typeList">
             <a href="###">我的订单</a>
-            <a href="###">我的购物车</a>
+            <router-link to="/cart">我的购物车</router-link>
             <a href="###">我的尚品汇</a>
             <a href="###">尚品汇会员</a>
             <a href="###">企业采购</a>
@@ -41,11 +41,13 @@
               id="autocomplete"
               class="input-error input-xxlarge"
               v-model="keyWords"
+              @keyup.enter="doSearch"
             />
             <button
               class="sui-btn btn-xlarge btn-danger"
               type="button"
               @click="doSearch"
+              
             >
               搜索
             </button>

@@ -385,7 +385,10 @@ export default {
         })
         .then((res) => {
           console.log(res);
-          this.$router.push({ name: "cart" });
+          sessionStorage.setItem('skuInfo',JSON.stringify(this.skuInfo));
+          sessionStorage.setItem('spuSaleAttrList',JSON.stringify(this.spuSaleAttrList));
+          sessionStorage.setItem('number',this.number);
+          this.$router.push({ name: "addToCart" });
         })
         .catch((err) => {
           alert(err);

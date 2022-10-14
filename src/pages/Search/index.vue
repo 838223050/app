@@ -336,6 +336,9 @@ export default {
   mounted() {
     this.$store.dispatch("getSearchList", this.searchParams);
   },
+  beforeMount(){
+    this.updateQueryAndParams();
+  },
   computed: {
     ...mapGetters(["goodsList", "trademarkList", "searchList"]),
     isAsc() {

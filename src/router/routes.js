@@ -3,7 +3,8 @@ import Register from '@/pages/Register'
 import Login from '@/pages/Login'
 import Detail from '@/pages/Detail'
 import Search from '@/pages/Search'
-import Cart from '@/pages/AddCartSuccess'
+import AddToCart from '@/pages/AddCartSuccess'
+import  Cart from '@/pages/ShopCart' 
 
 export default [
     {
@@ -36,6 +37,11 @@ export default [
         path: '/',
         redirect:'/home'
     }, 
+    {
+        path: '/SuccessAddTocart',
+        name: 'addToCart',
+        component:AddToCart
+    },
     {
         path: '/cart',
         name: 'cart',
