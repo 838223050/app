@@ -37,3 +37,13 @@ export const reqCartList = () => requests({
     method: 'get',
     url:'/cart/cartList'
 })
+
+export const reqDeleteCart = (id) => requests({
+    method: 'delete',
+    url:`/cart/deleteCart/${id}`
+})
+
+export const reqCheckedChange = (id, isChecked) => requests({
+    method: 'get',
+    url:`/cart/checkCart/${id}/${isChecked}`
+})

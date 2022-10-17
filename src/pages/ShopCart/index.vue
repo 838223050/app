@@ -13,7 +13,12 @@
       <div class="cart-body">
         <ul class="cart-list" v-for="(item, index) in cartList" :key="index">
           <li class="cart-list-con1">
-            <input type="checkbox" name="chk_list" />
+            <input
+              type="checkbox"
+              name="chk_list"
+              v-model="item.isChecked"
+              @change="checkedHandle(index)"
+            />
           </li>
           <li class="cart-list-con2">
             <img :src="item.imgUrl" />
@@ -43,28 +48,41 @@
             <span class="sum">{{ item.skuPrice * item.skuNum }}</span>
           </li>
           <li class="cart-list-con7">
-            <a href="#none" class="sindelet">删除</a>
+            <a
+              href="javascript:void(0);"
+              class="sindelet"
+              @click="deleteCart(index)"
+              >删除</a
+            >
             <br />
-            <a href="#none">移到收藏</a>
+            <a href="javascript:void(0);">移到收藏</a>
           </li>
         </ul>
       </div>
     </div>
     <div class="cart-tool">
       <div class="select-all">
-        <input class="chooseAll" type="checkbox" />
+        <input
+          class="chooseAll"
+          type="checkbox"
+          v-model="allIsChecked"
+          @click="AllSelectHandle"
+        />
         <span>全选</span>
       </div>
       <div class="option">
-        <a href="#none">删除选中的商品</a>
-        <a href="#none">移到我的关注</a>
-        <a href="#none">清除下柜商品</a>
+        <a href="javascript:void(0);">删除选中的商品</a>
+        <a>移到我的关注</a>
+        <a>清除下柜商品</a>
       </div>
       <div class="money-box">
-        <div class="chosed">已选择 <span>0</span>件商品</div>
+        <div class="chosed">
+          已选择 <span>{{ selectedNumber }}</span
+          >件商品
+        </div>
         <div class="sumprice">
           <em>总价（不含运费） ：</em>
-          <i class="summoney">0</i>
+          <i class="summoney">{{ PriceOfSum }}</i>
         </div>
         <div class="sumbtn">
           <a class="sum-btn" href="###" target="_blank">结算</a>
@@ -76,35 +94,154 @@
 
 <script>
 import { mapState } from "vuex";
+import { mythrottle } from "@/utils";
 export default {
   name: "ShopCart",
   mounted() {
-    this.$store.dispatch("getCartList");
+    this.getData()
+      .then(() => {
+        this.cartList.forEach((item) => {
+          this.numList.push(item.skuNum);
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },
+  data() {
+    return {
+      numList: [],
+    };
   },
   computed: {
     ...mapState({
-      cartList: (state) => state.CartList.cartList[0].cartInfoList,
-      numList: (state) => {
-        let tempArray = [];
-        state.CartList.cartList[0].cartInfoList.forEach((item) => {
-          console.log(item);
-          tempArray.push(item.skuNum);
-        });
-        return tempArray;
-      },
+      cartList: (state) => {if(state.CartList.cartList[0]){
+        return state.CartList.cartList[0].cartInfoList
+      }
+      else{
+        return [];
+      }},
     }),
+    allIsChecked() {
+      if (!this.cartList) {
+        return false;
+      } else return this.cartList.every((item) => item.isChecked);
+    },
+    selectedNumber() {
+      if (!this.cartList) {
+        return 0;
+      }
+      let count = 0;
+      this.cartList.forEach((item) => {
+        if (item.isChecked) count++;
+      });
+      return count;
+    },
+    PriceOfSum() {
+      if (!this.cartList) {
+        return 0;
+      }
+      let count = 0;
+      this.cartList.forEach((item) => {
+        if (item.isChecked) count += item.skuNum * item.skuPrice;
+      });
+      return count;
+    },
   },
   methods: {
+    getData() {
+      return this.$store.dispatch("getCartList");
+    },
     plus(index) {
       this.cartList[index].skuNum += 1;
+      mythrottle(() => {
+        this.$store
+          .dispatch("addCart", {
+            id: this.cartList[index].skuId,
+            num: this.cartList[index].skuNum - this.numList[index],
+          })
+          .then(() => {
+            this.$store.dispatch("getCartList");
+            this.numList[index] = this.cartList[index].skuNum;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }, 1000);
     },
     subs(index) {
       if (this.cartList[index].skuNum - 1 >= 1) {
         this.cartList[index].skuNum -= 1;
+        mythrottle(() => {
+          this.$store
+            .dispatch("addCart", {
+              id: this.cartList[index].skuId,
+              num: this.cartList[index].skuNum - this.numList[index],
+            })
+            .then(() => {
+              this.$store.dispatch("getCartList");
+              this.numList[index] = this.cartList[index].skuNum;
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }, 1000);
       }
     },
     priceChangeHandle(e, index) {
-      console.log(e, index);
+      if (!isNaN(e.target.value * 1)) {
+        this.$store
+          .dispatch("addCart", {
+            id: this.cartList[index].skuId,
+            num: e.target.value - this.numList[index],
+          })
+          .then(() => {
+            this.$store.dispatch("getCartList");
+            this.numList[index] = Number.parseInt(e.target.value);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        e.target.value = this.numList[index];
+        this.cartList[index].skuNum = this.numList[index];
+      }
+    },
+    AllSelectHandle() {
+      if (this.allIsChecked) {
+        this.cartList.forEach((item, index) => {
+          item.isChecked = false;
+          this.$store.dispatch("changeIsChecked", {
+            id: this.cartList[index].skuId,
+            isChecked: this.cartList[index].isChecked,
+          });
+        });
+      } else {
+        this.cartList.forEach((item, index) => {
+          if (item.isChecked == false) {
+            item.isChecked = true;
+            this.$store.dispatch("changeIsChecked", {
+              id: this.cartList[index].skuId,
+              isChecked: this.cartList[index].isChecked,
+            });
+          }
+        });
+      }
+    },
+    deleteCart(index) {
+      this.$store
+        .dispatch("deleteCart", this.cartList[index].skuId)
+        .then(() => {
+          this.getData();
+        }).catch(err=>{
+          console.log(err);
+        });
+    },
+    checkedHandle(index) {
+      this.$store.dispatch("changeIsChecked", {
+        id: this.cartList[index].skuId,
+        isChecked: this.cartList[index].isChecked,
+      });
     },
   },
 };

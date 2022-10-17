@@ -7,3 +7,10 @@ export const getUuid = () => {
     }
     return userTempId;
 }
+let timeId = null;
+export const mythrottle = function(func,time){
+    if (timeId) {
+        clearTimeout(timeId);
+    } 
+    timeId = setTimeout(func, time);
+}

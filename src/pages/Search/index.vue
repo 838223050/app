@@ -94,9 +94,9 @@
                   </div>
                   <div class="operate">
                     <a
-                      href="success-cart.html"
                       target="_blank"
                       class="sui-btn btn-bordered btn-danger"
+                      @click="addToCart(good.id)"
                       >加入购物车</a
                     >
                     <a href="javascript:void(0);" class="sui-btn btn-bordered"
@@ -331,6 +331,9 @@ export default {
       event.preventDefault();
       
       this.$router.push({name:'detail',params:{'productId':id}});
+    },
+    addToCart(id){
+      this.$store.dispatch('addCart',{'id':id,'num':1});
     }
   },
   mounted() {

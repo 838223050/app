@@ -1,4 +1,4 @@
-import { reqCartList } from "@/api";
+import { reqCartList,reqDeleteCart,reqCheckedChange } from "@/api";
 
 const state = {
     cartList: [{}],
@@ -8,7 +8,6 @@ const mutations = {
     GETCARTLIST(state, cartList) {    
         state.cartList = cartList;
     },
-
 };
 
 const actions = {
@@ -19,6 +18,20 @@ const actions = {
             console.log(result.data)
         }
     },
+    async deleteCart({ commit }, id) {
+        let result = await reqDeleteCart(id);
+        console.log(commit)
+        if (result.code == 200) {
+            console.log(result)
+        }
+    },
+    async changeIsChecked({ commit },{id,isChecked}) {
+        let result = await reqCheckedChange(id, isChecked==true?'1':'0');
+        console.log(commit)
+        if (result.code == 200) {
+            console.log('@@',result)
+        }
+    }
 };
 
 const getters = {};
