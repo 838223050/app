@@ -71,13 +71,13 @@
         <span>全选</span>
       </div>
       <div class="option">
-        <a href="javascript:void(0);">删除选中的商品</a>
+        <a href="javascript:void(0);" @click="deleteSelectedCart">删除选中的商品</a>
         <a>移到我的关注</a>
         <a>清除下柜商品</a>
       </div>
       <div class="money-box">
         <div class="chosed">
-          已选择 <span>{{ selectedNumber }}</span
+          已选择 <span>{{ selectedItem.length }}</span
           >件商品
         </div>
         <div class="sumprice">
@@ -115,27 +115,18 @@ export default {
   },
   computed: {
     ...mapState({
-      cartList: (state) => {if(state.CartList.cartList[0]){
-        return state.CartList.cartList[0].cartInfoList
-      }
-      else{
-        return [];
-      }},
+      cartList: (state) => {
+        if (state.CartList.cartList[0]) {
+          return state.CartList.cartList[0].cartInfoList;
+        } else {
+          return [];
+        }
+      },
     }),
     allIsChecked() {
-      if (!this.cartList) {
+      if (!this.cartList||this.cartList.length == 0) {
         return false;
       } else return this.cartList.every((item) => item.isChecked);
-    },
-    selectedNumber() {
-      if (!this.cartList) {
-        return 0;
-      }
-      let count = 0;
-      this.cartList.forEach((item) => {
-        if (item.isChecked) count++;
-      });
-      return count;
     },
     PriceOfSum() {
       if (!this.cartList) {
@@ -147,6 +138,12 @@ export default {
       });
       return count;
     },
+    selectedItem(){
+      if (!this.cartList) {
+        return [];
+      }
+      return this.cartList.filter(item=>item.isChecked)
+    }
   },
   methods: {
     getData() {
@@ -211,19 +208,23 @@ export default {
       if (this.allIsChecked) {
         this.cartList.forEach((item, index) => {
           item.isChecked = false;
-          this.$store.dispatch("changeIsChecked", {
-            id: this.cartList[index].skuId,
-            isChecked: this.cartList[index].isChecked,
-          });
+          mythrottle(() => {
+            this.$store.dispatch("changeIsChecked", {
+              id: this.cartList[index].skuId,
+              isChecked: this.cartList[index].isChecked,
+            });
+          }, 1000);
         });
       } else {
         this.cartList.forEach((item, index) => {
           if (item.isChecked == false) {
             item.isChecked = true;
-            this.$store.dispatch("changeIsChecked", {
-              id: this.cartList[index].skuId,
-              isChecked: this.cartList[index].isChecked,
-            });
+            mythrottle(() => {
+              this.$store.dispatch("changeIsChecked", {
+                id: this.cartList[index].skuId,
+                isChecked: this.cartList[index].isChecked,
+              });
+            }, 1000);
           }
         });
       }
@@ -233,7 +234,18 @@ export default {
         .dispatch("deleteCart", this.cartList[index].skuId)
         .then(() => {
           this.getData();
-        }).catch(err=>{
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    deleteSelectedCart() {
+      this.$store
+        .dispatch("deleteAllSelectedCart", this.selectedItem)
+        .then(() => {
+          this.getData();
+        })
+        .catch((err) => {
           console.log(err);
         });
     },

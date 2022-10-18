@@ -18,19 +18,27 @@ const actions = {
             console.log(result.data)
         }
     },
-    async deleteCart({ commit }, id) {
+    async deleteCart(_, id) {
         let result = await reqDeleteCart(id);
-        console.log(commit)
         if (result.code == 200) {
             console.log(result)
-        }
+        } else
+            return result;
     },
-    async changeIsChecked({ commit },{id,isChecked}) {
+    async changeIsChecked(_,{id,isChecked}) {
         let result = await reqCheckedChange(id, isChecked==true?'1':'0');
-        console.log(commit)
         if (result.code == 200) {
             console.log('@@',result)
         }
+    },
+    async deleteAllSelectedCart({ dispatch }, toBeDeleted) {
+        let res = [];
+        toBeDeleted.forEach(element => {
+            let temp = dispatch('deleteCart', element.skuId);
+            res.push(temp);
+        });
+        console.log(res)
+        return Promise.all(res);
     }
 };
 

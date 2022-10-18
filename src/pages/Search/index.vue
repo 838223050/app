@@ -327,9 +327,8 @@ export default {
     },
     // 前往详情页
     goToDetail(event,id){
-      console.log(event,id)
-      event.preventDefault();
-      
+      //event.preventDefault();
+      console.log(this.$router)
       this.$router.push({name:'detail',params:{'productId':id}});
     },
     addToCart(id){
