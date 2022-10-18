@@ -2,7 +2,6 @@
   <div>
     <!-- 项目的最外层 -->
     <div class="outer">
-
       <!-- 登录 -->
       <div class="login-wrap">
         <div class="login">
@@ -20,13 +19,17 @@
               <form action="##">
                 <div class="input-text clearFix">
                   <i></i>
-                  <input type="text" placeholder="手机号" />
+                  <input type="text" placeholder="手机号" v-model="phone" />
                   <span class="error-msg">错误提示信息</span>
                 </div>
 
                 <div class="input-text clearFix">
                   <i class="pwd"></i>
-                  <input type="text" placeholder="请输入密码" />
+                  <input
+                    type="password"
+                    placeholder="请输入密码"
+                    v-model="password"
+                  />
                   <span class="error-msg">错误提示信息</span>
                 </div>
 
@@ -37,7 +40,7 @@
                   </label>
                   <span class="forget">忘记密码？</span>
                 </div>
-                <button class="btn">登&nbsp;&nbsp;录</button>
+                <button class="btn" @click.prevent="doLogin">登&nbsp;&nbsp;录</button>
               </form>
               <div class="call clearFix">
                 <ul>
@@ -73,7 +76,23 @@
 
 <script>
 export default {
-    name:'LoginPage'
+  name: "LoginPage",
+  data() {
+    return {
+      phone: "",
+      password: "",
+    };
+  },
+  methods: {
+    doLogin() {
+      const {phone,password} = this;
+      this.$store.dispatch("doLogin",{phone,password}).then(()=>{
+        this.$router.replace({path:'/home'})
+      }).catch(err=>{
+        console.log(err);
+      });
+    },
+  },
 };
 </script>
 

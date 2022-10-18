@@ -2,47 +2,52 @@
   <div>
     <!-- 项目的最外层 -->
     <div class="outer">
-
       <!-- 注册内容 -->
       <div class="register">
         <h3>
           注册新用户
           <span class="go"
-            >我有账号，去 <a href="login.html" target="_blank">登陆</a>
+            >我有账号，去 <router-link to="/login">登陆</router-link>
           </span>
         </h3>
         <div class="content">
           <label>手机号:</label>
-          <input type="text" placeholder="请输入你的手机号" />
+          <input type="text" placeholder="请输入你的手机号" v-model="phone" />
           <span class="error-msg">错误提示信息</span>
         </div>
         <div class="content">
           <label>验证码:</label>
-          <input type="text" placeholder="请输入验证码" />
-          <img
-            ref="code"
-            src="http://182.92.128.115/api/user/passport/code"
-            alt="code"
-          />
+          <input type="text" placeholder="请输入验证码" v-model="verifyCode" />
+          <button id="verify" @click="getVerifyCode">获取验证码</button>
           <span class="error-msg">错误提示信息</span>
         </div>
         <div class="content">
           <label>登录密码:</label>
-          <input type="text" placeholder="请输入你的登录密码" />
+          <input
+            type="password"
+            placeholder="请输入你的登录密码"
+            v-model="password"
+          />
           <span class="error-msg">错误提示信息</span>
         </div>
         <div class="content">
           <label>确认密码:</label>
-          <input type="text" placeholder="请输入确认密码" />
+          <input
+            type="password"
+            placeholder="请输入确认密码"
+            v-model="confirmPassword"
+          />
           <span class="error-msg">错误提示信息</span>
         </div>
         <div class="controls">
-          <input name="m1" type="checkbox" />
-          <span>同意协议并注册《尚品汇用户协议》</span>
-          <span class="error-msg">错误提示信息</span>
+          <div>
+            <input name="m1" type="checkbox" v-model="agreementIsChecked" />
+            <span>同意协议并注册《尚品汇用户协议》</span>
+            <span class="error-msg">错误提示信息</span>
+          </div>
         </div>
         <div class="btn">
-          <button>完成注册</button>
+          <button @click="registerHandle">完成注册</button>
         </div>
       </div>
     </div>
@@ -50,8 +55,55 @@
 </template>
 
 <script>
+import { reqVerifyCode } from "@/api";
 export default {
-    name:'RegisterPage'
+  name: "RegisterPage",
+  data() {
+    return {
+      phone: "",
+      verifyCode: "",
+      password: "",
+      confirmPassword: "",
+      agreementIsChecked: false,
+    };
+  },
+  methods: {
+    getVerifyCode() {
+      if (this.phone.length == 0) return;
+      reqVerifyCode(this.phone)
+        .then((res) => {
+          this.verifyCode = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    registerHandle() {
+      const {
+        phone,
+        verifyCode,
+        password,
+        confirmPassword,
+        agreementIsChecked,
+      } = this;
+      phone &&
+        verifyCode &&
+        password &&
+        confirmPassword &&
+        agreementIsChecked &&
+        password === confirmPassword &&
+        this.$store.dispatch("doRegister", {
+          phone,
+          'code':verifyCode,
+          password,
+        }).then(()=>{
+          confirm("注册成功，即将跳转至登录页面！")
+          this.$router.push({path:'/login'});
+        }).catch(err=>{
+          console.log(err);
+        });
+    },
+  },
 };
 </script>
 
@@ -86,9 +138,8 @@ export default {
   }
 
   .content {
-    padding-left: 390px;
-    margin-bottom: 18px;
     position: relative;
+    margin-bottom: 18px;
 
     label {
       font-size: 14px;
@@ -107,8 +158,10 @@ export default {
       border: 1px solid #999;
     }
 
-    img {
-      vertical-align: sub;
+    button {
+      position: absolute;
+      height: 38px;
+      margin: 0 10px;
     }
 
     .error-msg {
@@ -122,7 +175,6 @@ export default {
   .controls {
     text-align: center;
     position: relative;
-
     input {
       vertical-align: middle;
     }

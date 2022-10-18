@@ -47,3 +47,20 @@ export const reqCheckedChange = (id, isChecked) => requests({
     method: 'get',
     url:`/cart/checkCart/${id}/${isChecked}`
 })
+
+export const reqVerifyCode = (phone) => requests({
+    method: 'get',
+    url:`/user/passport/sendCode/${phone}`
+})
+
+export const reqRegister = (data) => requests({
+    method: 'post',
+    url: '/user/passport/register',
+    data
+})
+
+export const reqLogin = (data) => requests({
+    method: 'post',
+    url: '/user/passport/login',
+    data
+})

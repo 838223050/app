@@ -4,6 +4,7 @@ import Home from './Home'
 import Search from './Search'
 import Item from './Item'
 import CartList from './CartList'
+import User from './User'
 
 Vue.use(Vuex);
 export default new Vuex.Store({
@@ -11,6 +12,7 @@ export default new Vuex.Store({
         Home,
         Search,
         Item,
-        CartList
+        CartList,
+        User
     }
 })
