@@ -13,7 +13,11 @@ const requests = axios.create({
 
 requests.interceptors.request.use((config) => {
     nProgress.start();
+    // 挂载临时id
     config.headers.userTempId = getUuid();
+    // 挂载token
+    if(localStorage.getItem('k1'))
+        config.headers.token = localStorage.getItem('k1');
     console.log(config)
     return config;
 })

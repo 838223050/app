@@ -7,16 +7,20 @@
         <div class="container">
           <div class="loginList">
             <p>尚品汇欢迎您！</p>
-            <p>
+            <p v-if="!userinfo">
               <span>请</span>
               <router-link to="/login">登录</router-link>
               <router-link to="/register" class="register"
                 >免费注册</router-link
               >
             </p>
+            <p v-else>
+              <a href="#">{{ userinfo.name }}</a>
+              <a href="#" class="register" @click="logoutHandle">注销</a>
+            </p>
           </div>
           <div class="typeList">
-            <a href="###">我的订单</a>
+            <router-link to="/trade">我的订单</router-link>
             <router-link to="/cart">我的购物车</router-link>
             <a href="###">我的尚品汇</a>
             <a href="###">尚品汇会员</a>
@@ -47,7 +51,6 @@
               class="sui-btn btn-xlarge btn-danger"
               type="button"
               @click="doSearch"
-              
             >
               搜索
             </button>
@@ -64,12 +67,17 @@ export default {
   mounted() {
     // 注册全局事件
     this.$bus.$on("clear", this.clear);
+
+    this.$store.dispatch("getUserInfo").catch(()=>{
+      localStorage.removeItem('k1');
+      this.$store.state.userinfo=null;
+    });
   },
   methods: {
     doSearch() {
       let location = {
         name: "search",
-        params: { keyword: this.keyWords },
+        params: { keyword: this.keyWords||null },
       };
       let query = this.$route.query;
       if (query) {
@@ -82,11 +90,24 @@ export default {
     clear() {
       this.keyWords = "";
     },
+    logoutHandle() {
+      this.$store
+        .dispatch("doLogout")
+        .then(() => {
+          this.$router.push({path:'/home'});
+        })
+        .catch((err) => alert(err));
+    },
   },
   data() {
     return {
       keyWords: "",
     };
+  },
+  computed: {
+    userinfo() {
+      return this.$store.state.User.userinfo;
+    },
   },
 };
 </script>

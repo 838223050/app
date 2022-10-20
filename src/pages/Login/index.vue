@@ -87,6 +87,7 @@ export default {
     doLogin() {
       const {phone,password} = this;
       this.$store.dispatch("doLogin",{phone,password}).then(()=>{
+        this.$store.dispatch("getUserInfo");
         this.$router.replace({path:'/home'})
       }).catch(err=>{
         console.log(err);

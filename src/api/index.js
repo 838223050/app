@@ -37,30 +37,50 @@ export const reqCartList = () => requests({
     method: 'get',
     url:'/cart/cartList'
 })
-
+// 删除购物车项目
 export const reqDeleteCart = (id) => requests({
     method: 'delete',
     url:`/cart/deleteCart/${id}`
 })
-
+// 改变购物车勾选情况
 export const reqCheckedChange = (id, isChecked) => requests({
     method: 'get',
     url:`/cart/checkCart/${id}/${isChecked}`
 })
-
+// 获取验证码
 export const reqVerifyCode = (phone) => requests({
     method: 'get',
     url:`/user/passport/sendCode/${phone}`
 })
-
+// 注册
 export const reqRegister = (data) => requests({
     method: 'post',
     url: '/user/passport/register',
     data
 })
-
+// 登录
 export const reqLogin = (data) => requests({
     method: 'post',
     url: '/user/passport/login',
     data
+})
+// 获取用户信息（需要header中有token）
+export const reqGetUserInfo = () => requests({
+    method: 'get',
+    url:'/user/passport/auth/getUserInfo'
+})
+// 登录状态注销
+export const reqLogout = () => requests({
+    method: 'get',
+    url:'/user/passport/logout'
+})
+// 获取用户地址列表
+export const reqUserAddress = () => requests({
+    method: 'get',
+    url:'/user/userAddress/auth/findUserAddressList'
+})
+
+export const reqUserTradeList = () => requests({
+    method: 'get',
+    url:'order/auth/trade'
 })

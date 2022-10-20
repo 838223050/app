@@ -4,7 +4,8 @@ import Login from '@/pages/Login'
 import Detail from '@/pages/Detail'
 import Search from '@/pages/Search'
 import AddToCart from '@/pages/AddCartSuccess'
-import  Cart from '@/pages/ShopCart' 
+import Cart from '@/pages/ShopCart' 
+import Trade from '@/pages/Trade'
 
 export default [
     {
@@ -46,5 +47,9 @@ export default [
         path: '/cart',
         name: 'cart',
         component:Cart
+    },
+    {
+        path: '/trade',
+        component:Trade
     }
 ]
