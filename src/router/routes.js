@@ -6,6 +6,8 @@ import Search from '@/pages/Search'
 import AddToCart from '@/pages/AddCartSuccess'
 import Cart from '@/pages/ShopCart' 
 import Trade from '@/pages/Trade'
+import Pay from "@/pages/Pay"
+import PaySuccess from '@/pages/PaySuccess'
 
 export default [
     {
@@ -51,5 +53,13 @@ export default [
     {
         path: '/trade',
         component:Trade
+    },
+    {
+        path: '/pay',
+        component:Pay
+    },
+    {
+        path: '/paySuccess',
+        component:PaySuccess
     }
 ]

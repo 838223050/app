@@ -1,8 +1,8 @@
 import { reqUserAddress, reqUserTradeList } from "@/api";
 
 const state = {
-    addressInfo: null,
-    tradeInfo: null,
+    addressInfo: [],
+    tradeInfo: [],
 };
 
 const mutations = {
